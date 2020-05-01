@@ -3,9 +3,10 @@ from error_model_controller import ErrorModelController
 from dqn_agent import DQNAgent
 from state_tracker import StateTracker
 import pickle, argparse, json, math
-from utils import remove_empty_slots
+from utils import remove_empty_slots, timeprint
 from user import User
-
+from time import time
+import datetime
 
 if __name__ == "__main__":
     # Can provide constants file path in args OR run it as is and change 'CONSTANTS_FILE_PATH' below
@@ -117,11 +118,14 @@ def train_run():
 
     """
 
-    print('Training Started...')
+    print('Training Started...\n')
+    print('at ', str(datetime.datetime.now()), '\n')
     episode = 0
     period_reward_total = 0
     period_success_total = 0
     success_rate_best = 0.0
+    t_train_start = time()
+    t_ep_start = time()
     
     while episode < NUM_EP_TRAIN:
         episode_reset()
@@ -137,10 +141,15 @@ def train_run():
             state = next_state
 
         period_success_total += success
-
+        
+        
+        
+        
         # Train
         if episode % TRAIN_FREQ == 0:
-            print("EP: ", episode, "\tSteps: ", steps, "\tMemoryIndex:", dqn_agent.memory_index)        
+            t_ep = (time()-t_ep_start)
+            
+            print("EP: %d \tSteps: %d \tMemoryIndex: %d \tTime (ep_freq): %s \tTime (total): %s" % (episode, steps , dqn_agent.memory_index, timeprint(t_ep), timeprint(time()-t_train_start)))
             #print("EP: ", episode, "\tSteps: ", steps, "\nMemoryIndex:", dqn_agent.memory_index)        
             # Check success rate
             success_rate = period_success_total / TRAIN_FREQ
@@ -159,8 +168,9 @@ def train_run():
             dqn_agent.copy()
             # Train
             dqn_agent.train()
+            t_ep_start = time()
     print('...Training Ended')
-
+    print('at ', str(datetime.datetime.now()), '\n')
 
 def episode_reset():
     """

@@ -1,5 +1,5 @@
 from dialogue_config import FAIL, SUCCESS
-
+import datetime
 
 def convert_list_to_dict(lst):
     """
@@ -50,3 +50,9 @@ def reward_function(success, max_round):
     elif success == SUCCESS:
         reward += 2 * max_round
     return reward
+
+
+def timeprint(seconds, rounding=4):
+    
+    tt = str(datetime.timedelta(seconds=seconds, microseconds=1))
+    return tt[:-rounding]
