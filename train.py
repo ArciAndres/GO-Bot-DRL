@@ -122,12 +122,16 @@ def train_run():
     period_reward_total = 0
     period_success_total = 0
     success_rate_best = 0.0
+    
     while episode < NUM_EP_TRAIN:
         episode_reset()
         episode += 1
         done = False
         state = state_tracker.get_state()
+        
+        steps = 0
         while not done:
+            steps += 1
             next_state, reward, done, success = run_round(state)
             period_reward_total += reward
             state = next_state
@@ -136,6 +140,8 @@ def train_run():
 
         # Train
         if episode % TRAIN_FREQ == 0:
+            print("EP: ", episode, "\tSteps: ", steps, "\tMemoryIndex:", dqn_agent.memory_index)        
+            #print("EP: ", episode, "\tSteps: ", steps, "\nMemoryIndex:", dqn_agent.memory_index)        
             # Check success rate
             success_rate = period_success_total / TRAIN_FREQ
             avg_reward = period_reward_total / TRAIN_FREQ
